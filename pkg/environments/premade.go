@@ -1,10 +1,14 @@
 package environments
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/porgull/go-search/pkg/assets"
+)
 
 var (
 	premadeEnvironments = map[string]Environment{
-		"bucharest": nil,
+		"bucharest": MustLoadEnvironmentFrom(assets.MustOpen("environments/bucharest.json")),
 	}
 )
 

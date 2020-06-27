@@ -2,6 +2,7 @@ package search
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/porgull/go-search/pkg/environments"
 )
@@ -21,4 +22,6 @@ type Result struct {
 // Print prints the results to stdout
 func (r Result) Print() {
 	fmt.Printf("Found node %s in %d steps.\n", r.Node.Name(), r.Steps)
+
+	fmt.Printf("Steps: %s\n", strings.Join(r.Node.Keys(), ", "))
 }

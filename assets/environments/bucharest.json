@@ -1,3 +1,103 @@
 {
-    ""
+    "start_node": "arad",
+    "goal_node": "bucharest",
+    "environment_name": "bucharest",
+    "states": {
+        "arad": {
+            "heuristic": 366,
+            "children": {
+                "zerind": 75,
+                "timisoara": 118
+            }
+        },
+        "bucharest": {
+            "heuristic": 0,
+            "children": {
+                "pitesti": 101,
+                "fagaras": 211
+            }
+        },
+        "zerind": {
+            "heuristic": 374,
+            "children": {
+                "oradea": 71,
+                "arad": 75
+            }
+        },
+        "timisoara": {
+            "heuristic": 329,
+            "children": {
+                "arad": 118,
+                "lugoj": 111    
+            }
+        },
+        "lugoj": {
+            "heuristic": 244,
+            "children": {
+                "mehadia": 70,
+                "timisoara": 111  
+            }
+        },
+        "mehadia": {
+            "heuristic": 241,
+            "children": {
+                "lugoj": 70,
+                "drobeta": 75
+            }
+        },
+        "drobeta": {
+            "heuristic": 242,
+            "children": {
+                "mehadia": 75,
+                "craiova": 120
+            }
+        },
+        "craiova": {
+            "heuristic": 160,
+            "children": {
+                "drobeta": 120,
+                "rimnicu vilcea": 146,
+                "pitesti": 138
+            }
+        },
+        "sibiu": {
+            "heuristic": 253,
+            "children": {
+                "arad": 140,
+                "oradea": 151,
+                "fagaras": 99,
+                "rimnicu vilcea": 80
+            }
+        },
+        "oradea": {
+            "heuristic": 380,
+            "children": {
+                "zerind": 71,
+                "sibiu": 151   
+            }
+        },
+        "rimnicu vilcea": {
+            "heuristic": 193,
+            "children": {
+                "sibiu": 80,
+                "pitesti": 97,
+                "craiova": 146  
+            }
+        },
+        "fagaras": {
+            "heuristic": 176,
+            "children": {
+                "sibiu": 99,
+                "bucharest": 211   
+            }
+        },
+        "pitesti": {
+            "heuristic": 100,
+            "children": {
+                "rimnicu vilcea": 97,
+                "bucharest": 101,
+                "craiova": 138
+            }
+        }
+    }
 }

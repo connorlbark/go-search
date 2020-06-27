@@ -3,13 +3,13 @@ package environments
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
-	"os"
 )
 
 // MustLoadEnvironmentFrom loads an environment into memory, panicking on an error
-func MustLoadEnvironmentFrom(path string) Environment {
-	env, err := LoadEnvironmentFrom(path)
+func MustLoadEnvironmentFrom(f io.Reader) Environment {
+	env, err := LoadEnvironmentFrom(f)
 	if err != nil {
 		panic(err)
 	}
@@ -17,13 +17,7 @@ func MustLoadEnvironmentFrom(path string) Environment {
 }
 
 // LoadEnvironmentFrom loads an environment into memory
-func LoadEnvironmentFrom(path string) (Environment, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
+func LoadEnvironmentFrom(f io.Reader) (Environment, error) {
 	b, err := ioutil.ReadAll(f)
 	if err != nil {
 		return nil, err

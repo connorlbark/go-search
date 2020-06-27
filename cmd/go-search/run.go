@@ -44,11 +44,19 @@ var (
 					os.Exit(1)
 				}
 			} else if runFlags.load != "" {
-				env, err = environments.LoadEnvironmentFrom(runFlags.load)
+				f, err := os.Open(runFlags.load)
 				if err != nil {
+					fmt.Fprintf(os.Stderr, "Could not open env file at %s: %s", runFlags.load, err.Error())
+					os.Exit(1)
+				}
+
+				env, err = environments.LoadEnvironmentFrom(f)
+				if err != nil {
+					f.Close()
 					fmt.Fprintf(os.Stderr, "Could not load environment from %s: %s\n", runFlags.load, err.Error())
 					os.Exit(1)
 				}
+				f.Close()
 			}
 
 			if runFlags.with == "" {
