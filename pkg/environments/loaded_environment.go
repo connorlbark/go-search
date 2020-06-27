@@ -136,6 +136,20 @@ func (n *LoadedNode) Visualize() {
 	fmt.Println("TODO")
 }
 
+func (n *LoadedNode) IsNode(other Node) bool {
+	if other == nil || n == nil {
+		return false
+	}
+
+	if loaded, ok := other.(*LoadedNode); ok {
+		if loaded == nil {
+			return false
+		}
+		return loaded.name == n.name
+	}
+	return false
+}
+
 type States map[string]LoadedState
 
 func (s States) loadNode(name string, cost int, parent *LoadedNode, env *LoadedEnvironment) *LoadedNode {

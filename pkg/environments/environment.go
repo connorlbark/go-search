@@ -38,6 +38,9 @@ type Node interface {
 	// Visualize updates the console output with a visualization
 	// of the current node
 	Visualize()
+
+	// IsNode returns if nodes are equivalent
+	IsNode(Node) bool
 }
 
 type Result struct {
