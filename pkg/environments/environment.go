@@ -10,6 +10,15 @@ type Environment interface {
 
 	// Name returns the environment name
 	Name() string
+
+	// VisualizeSolution prints the solution
+	// to the console
+	VisualizeSolution(Node)
+
+	// Validate is ran before the environment
+	// is used to ensure that there aren't any
+	// setup errors with the env
+	Validate() error
 }
 
 // Node is a single node of the search space
@@ -33,16 +42,8 @@ type Node interface {
 	Heuristic() int
 
 	// Keys returns the steps taken to reach this node
-	Keys() []string
-
-	// Visualize updates the console output with a visualization
-	// of the current node
-	Visualize()
+	Steps() []string
 
 	// IsNode returns if nodes are equivalent
 	IsNode(Node) bool
-}
-
-type Result struct {
-	FinalNode Node
 }

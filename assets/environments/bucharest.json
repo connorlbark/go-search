@@ -1,4 +1,5 @@
 {
+    "type": "state",
     "start_node": "arad",
     "goal_node": "bucharest",
     "environment_name": "bucharest",

@@ -24,8 +24,10 @@ var (
 func Algorithms() []string {
 	names := make([]string, len(algorithms))
 
+	i := 0
 	for name := range algorithms {
-		names = append(names, name)
+		names[i] = name
+		i++
 	}
 
 	return names

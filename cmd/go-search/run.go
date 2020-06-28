@@ -11,10 +11,9 @@ import (
 )
 
 type runFlagsCfg struct {
-	on        string
-	load      string
-	with      string
-	visualize bool
+	on   string
+	load string
+	with string
 }
 
 var (
@@ -59,6 +58,11 @@ var (
 				f.Close()
 			}
 
+			if err = env.Validate(); err != nil {
+				fmt.Fprintf(os.Stderr, "Invalid environment: %s\n", err.Error())
+				os.Exit(1)
+			}
+
 			if runFlags.with == "" {
 				cmd.Help()
 				os.Exit(1)
@@ -71,7 +75,7 @@ var (
 			}
 
 			sctx := search.Context{
-				Visualize: runFlags.visualize,
+				Visualize: true,
 			}
 
 			result, err := algo.Run(sctx, env)
@@ -89,7 +93,6 @@ func init() {
 	runCmd.PersistentFlags().StringVar(&runFlags.on, "on", "", "Use this pre-created environment to run the search algorithm")
 	runCmd.PersistentFlags().StringVar(&runFlags.load, "load", "", "Load your own environment into memory")
 	runCmd.PersistentFlags().StringVar(&runFlags.with, "with", "", "Algorithm to use to search")
-	runCmd.PersistentFlags().BoolVar(&runFlags.visualize, "visualize", false, "Visualize the search process")
 }
 
 func init() {

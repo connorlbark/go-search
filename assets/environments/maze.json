@@ -1,0 +1,16 @@
+{
+    "type": "grid",
+    "grid_name": "maze",
+    "grid": [
+        "*...x........xxxxxxxxxxxxx....",
+        ".xx....xx.xx.xxxxxxx.....x.xx.",
+        ".x..xx....xx.xxx.xxx...x...xx.",
+        "..xxx.x.xx.x.x.....xxx..xxxx..",
+        ".xx.....xx.x.xx.xx...xx.xxxx.x",
+        "..x.xxxxxx......xxxx....xxxx..",
+        "x.x..xx..x.xxxx...xxxxxx...xx.",
+        "...x.xxx...xxxxxx..xx....x.xx.",
+        "xx...xxxxxxxxxxxxx.xxx.xx..xx.",
+        "xxxxxxxxxxxxxxxxxx.....xx...x!"
+    ]
+}
