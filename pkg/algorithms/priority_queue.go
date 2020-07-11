@@ -1,15 +1,50 @@
 package algorithms
 
 import (
+	"container/heap"
+
 	"github.com/porgull/go-search/pkg/environments"
 )
 
+// NewPriorityNodeQueue initializes a priority queue with the provided
+// start node and priority map to use
+func NewPriorityNodeQueue(start environments.Node, priorityMap map[string]int) *PriorityNodeQueue {
+	frontier := make([]environments.Node, 1, 512)
+	frontier[0] = start
+
+	nodeIndexes := make(map[string]int, 512)
+	nodeIndexes[start.Name()] = 0
+
+	queue := &PriorityNodeQueue{
+		NodeIndexes: nodeIndexes,
+		Frontier:    frontier,
+		PriorityMap: priorityMap,
+	}
+
+	heap.Init(queue)
+
+	return queue
+
+}
+
 // PriorityNodeQueue implements heap.Interface to allow
-// for a priority queue based on the heuristic value
+// for a priority queue based on a custom priority map;
+// see heap.Interface for usage
 type PriorityNodeQueue struct {
+	// Frontier is the current
+	// open set
 	Frontier []environments.Node
 
+	// PriorityMap is referenced
+	// to get the priority value
+	// for a node. Lowest priority
+	// nodes are the ones that are
+	// popped
 	PriorityMap map[string]int
+
+	// NodeIndexes keeps track
+	// of the indexes of nodes
+	// based upon their name
 	NodeIndexes map[string]int
 }
 

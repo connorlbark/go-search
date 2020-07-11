@@ -17,7 +17,8 @@ var (
 	// Algorithms defines the valid
 	// search algorithms
 	algorithms = map[string]Algorithm{
-		"a*": AStar{},
+		"a*":                AStar{},
+		"greedy_best_first": GreedyBestFirst{},
 	}
 )
 

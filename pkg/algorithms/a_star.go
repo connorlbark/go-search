@@ -38,30 +38,15 @@ func (a AStar) Run(e environments.Environment) (search.Result, error) {
 
 // initialize AStar's fields for this environment
 func (a *AStar) setStart(start environments.Node) {
-	frontier := make([]environments.Node, 1, 512)
-	frontier[0] = start
-
 	a.cost = make(map[string]int, 512)
 	a.cost[start.Name()] = 0
 
 	a.costWithHeuristic = make(map[string]int, 512)
 	a.costWithHeuristic[start.Name()] = start.Heuristic()
 
-	nodeIndexes := make(map[string]int, 512)
-	nodeIndexes[start.Name()] = 0
-
 	a.iterations = 0
 
-	a.queue = &PriorityNodeQueue{
-		Frontier: frontier,
-		// maps are pointers, so any changes to
-		// a.costWithHeuristic are reflected in
-		// the priority queue
-		PriorityMap: a.costWithHeuristic,
-		NodeIndexes: nodeIndexes,
-	}
-
-	heap.Init(a.queue)
+	a.queue = NewPriorityNodeQueue(start, a.costWithHeuristic)
 }
 
 // find and return the goal node

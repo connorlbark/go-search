@@ -86,7 +86,8 @@ Uninformed Search Algorithms:
 - TODO
 
 Informed Search Algorithms
-- A* (AStar) Search
+- Greedy Best First Search: Uses only heuristic
+- A* (AStar) Search: Uses both cost and heuristic
 
 Local Search Algorithms:
 - TODO
