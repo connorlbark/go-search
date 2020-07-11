@@ -4,7 +4,7 @@ import (
 	"github.com/porgull/go-search/pkg/environments"
 )
 
-// HueristicNodeQueue implements heap.Interface to allow
+// PriorityNodeQueue implements heap.Interface to allow
 // for a priority queue based on the heuristic value
 type PriorityNodeQueue struct {
 	Frontier []environments.Node

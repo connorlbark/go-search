@@ -9,6 +9,8 @@ func init() {
 	addEnvironmentType("grid", &GridEnvironment{})
 }
 
+// GridEnvironment is a Grid World environmnet
+// which can be loaded from JSON
 type GridEnvironment struct {
 	GridName string   `json:"grid_name"`
 	Grid     []string `json:"grid"`
@@ -27,10 +29,13 @@ func (g *GridEnvironment) loadNode(pnt Vector2D, parent *GridNode, direction str
 	}
 }
 
+// Name returns the name of this grid world, provided
+// from JSON
 func (g *GridEnvironment) Name() string {
 	return g.GridName
 }
 
+// Start returns the start grid point node
 func (g *GridEnvironment) Start() Node {
 	return g.loadNode(*g.start, nil, "start", g)
 }
@@ -64,12 +69,14 @@ func (g *GridEnvironment) passable(pnt Vector2D) bool {
 
 func (g *GridEnvironment) getPoint(pnt Vector2D) gridPoint {
 	if pnt.WithinBounds(g.gridSize) == false {
-		return Unpassable
+		return Impassable
 	}
 
 	return gridPoint(g.Grid[pnt.y][pnt.x])
 }
 
+// VisualizeSolution prints out the grid with the path returned
+// by the algorithm
 func (g *GridEnvironment) VisualizeSolution(n Node) {
 	solutionGrid := g.copyGrid()
 
@@ -99,6 +106,8 @@ func (g *GridEnvironment) copyGrid() []string {
 	return out
 }
 
+// IsGoalNode checks if the provided node is the goal
+// node
 func (g *GridEnvironment) IsGoalNode(n Node) bool {
 	if gridNode, ok := n.(*GridNode); ok {
 		return gridNode.point.Equals(*g.end)
@@ -106,6 +115,8 @@ func (g *GridEnvironment) IsGoalNode(n Node) bool {
 	return false
 }
 
+// Validate validates that the provided GridWorld
+// from the JSON is valid
 func (g *GridEnvironment) Validate() error {
 	if g.Grid == nil || len(g.Grid) == 0 {
 		return fmt.Errorf("must supply grid when using type grid")
@@ -155,6 +166,10 @@ func (g *GridEnvironment) Validate() error {
 	return nil
 }
 
+// GridNode implements Node with
+// children being up/down/left/right
+// if the movement is possible from
+// the current point on the grid
 type GridNode struct {
 	point     Vector2D
 	env       *GridEnvironment
@@ -162,22 +177,31 @@ type GridNode struct {
 	direction string
 }
 
+// Heuristic returns the Manhattan Distance to the
+// goal node
 func (g *GridNode) Heuristic() int {
 	return g.point.ManhattanDistanceTo(*g.env.end)
 }
 
+// Children returns up/down/left/right, if possible
 func (g *GridNode) Children() []Node {
 	return g.env.getNeighbors(g)
 }
 
+// Name is the point (x,y) on the grid
 func (g *GridNode) Name() string {
 	return fmt.Sprintf("(%d,%d)", g.point.x, g.point.y)
 }
 
+// Cost is the cost of movement, according
+// to the map
 func (g *GridNode) Cost() int {
 	return g.env.getPoint(g.point).Cost()
 }
 
+// Steps traverses through the parents
+// to determine the sequence of up/down/left/right
+// actions taken
 func (g *GridNode) Steps() []string {
 	// get directions
 
@@ -192,6 +216,8 @@ func (g *GridNode) Steps() []string {
 	return names
 }
 
+// IsNode checks equality with another node
+// by checking the x/y positions
 func (g *GridNode) IsNode(other Node) bool {
 	if otherGridNode, ok := other.(*GridNode); ok {
 		if otherGridNode == nil || g == nil {
@@ -202,6 +228,7 @@ func (g *GridNode) IsNode(other Node) bool {
 	return false
 }
 
+// Parent returns the parent node, and nil if the start node
 func (g *GridNode) Parent() Node {
 	if g.parent == nil {
 		return nil // this is required in order to allow nil comparisons
@@ -209,11 +236,13 @@ func (g *GridNode) Parent() Node {
 	return g.parent
 }
 
+// Vector2D provides an x/y coordinate
 type Vector2D struct {
 	x int
 	y int
 }
 
+// Add adds two Vector2Ds together
 func (v Vector2D) Add(other Vector2D) Vector2D {
 	return Vector2D{
 		x: v.x + other.x,
@@ -221,6 +250,8 @@ func (v Vector2D) Add(other Vector2D) Vector2D {
 	}
 }
 
+// WithinBounds checks if the vector is within
+// the provided bounds
 func (v Vector2D) WithinBounds(bounds Vector2D) bool {
 	if v.x < 0 || v.y < 0 {
 		return false
@@ -231,10 +262,13 @@ func (v Vector2D) WithinBounds(bounds Vector2D) bool {
 	return true
 }
 
+// ManhattanDistanceTo calculates the manhattan distance to
+// another node
 func (v Vector2D) ManhattanDistanceTo(other Vector2D) int {
 	return int(abs(int32(other.x-v.x)) + abs(int32(other.y-v.y)))
 }
 
+// Equals returns if the vectors are equal
 func (v Vector2D) Equals(other Vector2D) bool {
 	return v.x == other.x && v.y == other.y
 }
@@ -242,14 +276,26 @@ func (v Vector2D) Equals(other Vector2D) bool {
 type gridPoint rune
 
 const (
-	Start      gridPoint = '*'
-	End        gridPoint = '!'
-	Unpassable gridPoint = 'x'
+	// Start defines the starting point on the grid world
+	Start gridPoint = '*'
+	// End defines the goal point
+	End gridPoint = '!'
+	// Impassable defines a point that
+	// cannot be traversed into
+	Impassable gridPoint = 'x'
 
-	LowCost  gridPoint = '.'
-	MidCost  gridPoint = ','
+	// LowCost is a passable point with cost
+	// of 1
+	LowCost gridPoint = '.'
+	// MidCost is a passable point with cost
+	// of 2
+	MidCost gridPoint = ','
+	// HighCost is a passable point with cost
+	// of 3
 	HighCost gridPoint = '#'
 
+	// Path defines, when printed the grid world
+	// out, the path given by the algorithm
 	Path gridPoint = '●'
 )
 
@@ -257,7 +303,7 @@ var (
 	valid = []gridPoint{
 		Start,
 		End,
-		Unpassable,
+		Impassable,
 
 		LowCost,
 		MidCost,
@@ -274,7 +320,7 @@ var (
 )
 
 func (g gridPoint) Passable() bool {
-	return g != Unpassable
+	return g != Impassable
 }
 
 func (g gridPoint) Cost() int {

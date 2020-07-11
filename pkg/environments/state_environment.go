@@ -71,7 +71,7 @@ type StateNode struct {
 	cost   int
 }
 
-// Keys returns the steps it took to get here
+// Steps returns the states it traversed to get to the goal node
 func (n *StateNode) Steps() []string {
 
 	names := make([]string, 1, 128)
