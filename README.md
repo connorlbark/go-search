@@ -143,7 +143,7 @@ into memory.
 For example, the states can 
 be enumerated like so:
 
-```json
+```json5
 ...
 "arad": {
     "heuristic": 366,
