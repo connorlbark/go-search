@@ -86,8 +86,8 @@ Uninformed Search Algorithms:
 - TODO
 
 Informed Search Algorithms
-- Greedy Best First Search: Uses only heuristic
-- A* (AStar) Search: Uses both cost and heuristic
+- [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search#Greedy_BFS) (key: `greedy_best_first_search`): Uses only heuristic
+- [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) (key: `a*`) Search: Uses both cost and heuristic
 
 Local Search Algorithms:
 - TODO
@@ -132,8 +132,8 @@ the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
 to the goal node.
 
 Pre-made Grid environments:
-- Corners: Simply has to traverse to the corner
-- Maze: Basic maze
+- `corners`: Simply has to traverse to the corner
+- `maze`: Basic maze
 
 ### StateEnvironment
 
@@ -165,6 +165,6 @@ be enumerated like so:
 ```
 
 Pre-made State environments:
-- Bucharest: From the 3rd Edition of
+- `bucharest`: From the 3rd Edition of
 AI: A Modern Approach by Stuart J.
 Russell and Peter Norvig
