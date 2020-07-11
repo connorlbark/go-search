@@ -12,7 +12,11 @@ import (
 // https://en.wikipedia.org/wiki/A*_search_algorithm
 // for a quick overview.
 type AStar struct {
-	queue      *HueristicNodeQueue
+	queue *PriorityNodeQueue
+
+	cost              map[string]int
+	costWithHeuristic map[string]int
+
 	iterations int
 }
 
@@ -37,22 +41,24 @@ func (a *AStar) setStart(start environments.Node) {
 	frontier := make([]environments.Node, 1, 512)
 	frontier[0] = start
 
-	cost := make(map[string]int, 512)
-	cost[start.Name()] = 0
+	a.cost = make(map[string]int, 512)
+	a.cost[start.Name()] = 0
 
-	costWithHeuristic := make(map[string]int, 512)
-	costWithHeuristic[start.Name()] = start.Heuristic()
+	a.costWithHeuristic = make(map[string]int, 512)
+	a.costWithHeuristic[start.Name()] = start.Heuristic()
 
 	nodeIndexes := make(map[string]int, 512)
 	nodeIndexes[start.Name()] = 0
 
 	a.iterations = 0
 
-	a.queue = &HueristicNodeQueue{
-		Frontier:              frontier,
-		NodeCosts:             cost,
-		NodeCostWithHeuristic: costWithHeuristic,
-		NodeIndexes:           nodeIndexes,
+	a.queue = &PriorityNodeQueue{
+		Frontier: frontier,
+		// maps are pointers, so any changes to
+		// a.costWithHeuristic are reflected in
+		// the priority queue
+		PriorityMap: a.costWithHeuristic,
+		NodeIndexes: nodeIndexes,
 	}
 
 	heap.Init(a.queue)
@@ -70,17 +76,17 @@ func (a *AStar) findGoal(e environments.Environment) (environments.Node, error) 
 			return currentNode, nil
 		}
 
-		currentNodeCost := a.queue.NodeCosts[currentNode.Name()]
+		currentNodeCost := a.cost[currentNode.Name()]
 		for _, child := range currentNode.Children() {
 			childCost := currentNodeCost + child.Cost()
 
-			previousChildCost, seen := a.queue.NodeCosts[child.Name()]
+			previousChildCost, seen := a.cost[child.Name()]
 
 			// if we found a better route to this node OR this
 			// node hasn't been seen yet
 			if (!seen) || (seen && previousChildCost > childCost) {
-				a.queue.NodeCosts[child.Name()] = childCost
-				a.queue.NodeCostWithHeuristic[child.Name()] = childCost + child.Heuristic()
+				a.cost[child.Name()] = childCost
+				a.costWithHeuristic[child.Name()] = childCost + child.Heuristic()
 				if currIdx, inQueue := a.queue.NodeIndexes[child.Name()]; inQueue {
 					// if the child is already in the frontier, replace it
 					// with this node b/c this node has a lower cost
