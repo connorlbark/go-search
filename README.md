@@ -79,3 +79,91 @@ environments.
 
 See the `environments.Environment` interface and the
 `algorithms.Algorithm` interface for details.
+
+## Provided Search Algorithms
+
+Uninformed Search Algorithms:
+- TODO
+
+Informed Search Algorithms
+- A* (AStar) Search
+
+Local Search Algorithms:
+- TODO
+
+## Provided Environments
+
+Some of the environments are defined
+by loading in JSON files. See
+`assets/environments` for the
+files that define the pre-made
+environments if you wish to make
+your own.
+
+### GridEnvironment
+
+Here's an example definition of
+a grid environment:
+
+```
+*...x........xxxxxxxxxxxxx....
+.xx....xx.xx.xxxxxxx.....x.xx.
+.x..xx....xx.xxx.xxx...x...xx.
+..xxx.x.xx.x.x.....xxx..xxxx..
+.xx.....xx.x.xx.xx...xx.xxxx.x
+..x.xxxxxx......xxxx....xxxx..
+x.x..xx..x.xxxx...xxxxxx...xx.
+...x.xxx...xxxxxx..xx....x.xx.
+xx...xxxxxxxxxxxxx.xxx.xx..xx.
+xxxxxxxxxxxxxxxxxx.....xx...x!
+```
+
+Legend:
+- `*`: Start
+- `!`: End
+- `.`: Passable, cost 1
+- `,`: Passable, cost 2
+- `#`: Passable, cost 3
+- `x`: Impassable
+
+The heuristic for this environment is 
+the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
+to the goal node.
+
+Pre-made Grid environments:
+- Corners: Simply has to traverse to the corner
+- Maze: Basic maze
+
+### StateEnvironment
+
+A State environment is an environment
+where every single state can be loaded
+into memory.
+
+For example, the states can 
+be enumerated like so:
+
+```json
+...
+"arad": {
+    "heuristic": 366,
+    "children": { // key = name, val = cost to node
+        "zerind": 75, 
+        "timisoara": 118,
+        "sibiu": 140
+    }
+},
+"zerind": {
+    "heuristic": 374,
+    "children": {
+        "oradea": 71,
+        "arad": 75
+    }
+},
+...
+```
+
+Pre-made State environments:
+- Bucharest: From the 3rd Edition of
+AI: A Modern Approach by Stuart J.
+Russell and Peter Norvig
