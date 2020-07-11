@@ -86,7 +86,7 @@ Uninformed Search Algorithms:
 - TODO
 
 Informed Search Algorithms
-- [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search#Greedy_BFS) (key: `greedy_best_first_search`): Uses only heuristic
+- [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search#Greedy_BFS) (key: `greedy_best_first`): Uses only heuristic
 - [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) (key: `a*`) Search: Uses both cost and heuristic
 
 Local Search Algorithms:
