@@ -6,7 +6,6 @@ import (
 
 	"github.com/porgull/go-search/pkg/algorithms"
 	"github.com/porgull/go-search/pkg/environments"
-	"github.com/porgull/go-search/pkg/search"
 	"github.com/spf13/cobra"
 )
 
@@ -74,11 +73,7 @@ var (
 				}
 			}
 
-			sctx := search.Context{
-				Visualize: true,
-			}
-
-			result, err := algo.Run(sctx, env)
+			result, err := algo.Run(env)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error while running algorithm %s on %s: %s\n", runFlags.with, env.Name(), err.Error())
 				os.Exit(1)

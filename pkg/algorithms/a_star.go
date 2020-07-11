@@ -17,10 +17,10 @@ type AStar struct {
 }
 
 // Run runs A* on the environment and returns the result
-func (a AStar) Run(sctx search.Context, e environments.Environment) (search.Result, error) {
-	a.SetStart(e.Start())
+func (a AStar) Run(e environments.Environment) (search.Result, error) {
+	a.setStart(e.Start())
 
-	node, err := a.FindGoal(e)
+	node, err := a.findGoal(e)
 	if err != nil {
 		return search.Result{}, err
 	}
@@ -32,7 +32,8 @@ func (a AStar) Run(sctx search.Context, e environments.Environment) (search.Resu
 	}, nil
 }
 
-func (a *AStar) SetStart(start environments.Node) {
+// initialize AStar's fields for this environment
+func (a *AStar) setStart(start environments.Node) {
 	frontier := make([]environments.Node, 1, 512)
 	frontier[0] = start
 
@@ -57,7 +58,8 @@ func (a *AStar) SetStart(start environments.Node) {
 	heap.Init(a.queue)
 }
 
-func (a *AStar) FindGoal(e environments.Environment) (environments.Node, error) {
+// find and return the goal node
+func (a *AStar) findGoal(e environments.Environment) (environments.Node, error) {
 	// if nothing in queue/frontier, then it is impossible
 	// to find the goal node
 	for a.queue.Len() > 0 {

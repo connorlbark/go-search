@@ -7,10 +7,10 @@ import (
 	"github.com/porgull/go-search/pkg/search"
 )
 
-// Search defines the interface for a search algorithm
+// Algorithm defines the interface for a search algorithm
 type Algorithm interface {
 	// Run searches in the environment for the goal node
-	Run(sctx search.Context, e environments.Environment) (search.Result, error)
+	Run(e environments.Environment) (search.Result, error)
 }
 
 var (
@@ -21,6 +21,7 @@ var (
 	}
 )
 
+// Algorithms returns all of the premade algorithm names
 func Algorithms() []string {
 	names := make([]string, len(algorithms))
 
@@ -33,6 +34,7 @@ func Algorithms() []string {
 	return names
 }
 
+// GetAlgorithm returns the desired algorithm
 func GetAlgorithm(name string) (Algorithm, error) {
 	if algorithm, ok := algorithms[name]; ok {
 		return algorithm, nil
