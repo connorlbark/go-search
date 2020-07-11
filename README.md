@@ -20,7 +20,7 @@ Legend:
 
 ```bash
 $ go run ./cmd/go-search --on maze with 'a*'
-Found node (29,9) in 135 interations.
+Found node (29,9) in 135 iterations.
 Steps (61): start, right, right, right, down, right, right, right, up, right, right, right, right, right, right, down, down, down, down, down, right, right, right, up, up, right, right, right, down, right, right, down, right, right, right, up, up, left, up, up, right, right, down, right, right, up, up, right, right, right, down, down, down, left, down, down, right, down, down, down, down
 Total cost of solution: 61
 ●●●●x.●●●●●●●xxxxxxxxxxxxx●●●●
