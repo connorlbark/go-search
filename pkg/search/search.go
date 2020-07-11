@@ -25,11 +25,13 @@ func (r Result) Print() {
 	fmt.Printf("Found node %s in %d interations.\n", r.Node.Name(), r.Iterations)
 	steps := r.Node.Steps()
 
-	fmt.Printf("Steps to solution: %d.\nSteps: %s\n", len(steps), strings.Join(steps, ", "))
+	fmt.Printf("Steps (%d): %s\n", len(steps), strings.Join(steps, ", "))
 	fmt.Println("Total cost of solution:", r.TotalCost())
 	r.Environment.VisualizeSolution(r.Node)
 }
 
+// TotalCost returns the total cost of the
+// steps taken
 func (r Result) TotalCost() int {
 	total := 0
 	parent := r.Node

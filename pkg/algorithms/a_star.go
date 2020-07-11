@@ -12,10 +12,8 @@ import (
 // https://en.wikipedia.org/wiki/A*_search_algorithm
 // for a quick overview.
 type AStar struct {
-	frontier          *NodeQueue
-	cost              map[string]int
-	costWithHeuristic map[string]int
-	iterations        int
+	queue      *HueristicNodeQueue
+	iterations int
 }
 
 // Run runs A* on the environment and returns the result
@@ -35,42 +33,65 @@ func (a AStar) Run(sctx search.Context, e environments.Environment) (search.Resu
 }
 
 func (a *AStar) SetStart(start environments.Node) {
-	nodeQueue := NodeQueue(make([]environments.Node, 0, 512))
-	a.frontier = &nodeQueue
-	heap.Push(a.frontier, start)
+	frontier := make([]environments.Node, 1, 512)
+	frontier[0] = start
 
-	a.cost = make(map[string]int, 512)
-	a.cost[start.Name()] = 0
+	cost := make(map[string]int, 512)
+	cost[start.Name()] = 0
 
-	a.costWithHeuristic = make(map[string]int, 512)
-	a.costWithHeuristic[start.Name()] = start.Heuristic()
+	costWithHeuristic := make(map[string]int, 512)
+	costWithHeuristic[start.Name()] = start.Heuristic()
+
+	nodeIndexes := make(map[string]int, 512)
+	nodeIndexes[start.Name()] = 0
 
 	a.iterations = 0
+
+	a.queue = &HueristicNodeQueue{
+		Frontier:              frontier,
+		NodeCosts:             cost,
+		NodeCostWithHeuristic: costWithHeuristic,
+		NodeIndexes:           nodeIndexes,
+	}
+
+	heap.Init(a.queue)
 }
 
 func (a *AStar) FindGoal(e environments.Environment) (environments.Node, error) {
-	for a.frontier.Len() > 0 {
+	// if nothing in queue/frontier, then it is impossible
+	// to find the goal node
+	for a.queue.Len() > 0 {
 		a.iterations++
-		currentNode := heap.Pop(a.frontier).(environments.Node)
+		currentNode := heap.Pop(a.queue).(environments.Node)
 
 		if e.IsGoalNode(currentNode) {
 			return currentNode, nil
 		}
 
-		currentNodeCost := a.cost[currentNode.Name()]
+		currentNodeCost := a.queue.NodeCosts[currentNode.Name()]
 		for _, child := range currentNode.Children() {
 			childCost := currentNodeCost + child.Cost()
 
-			previousChildCost, seen := a.cost[child.Name()]
+			previousChildCost, seen := a.queue.NodeCosts[child.Name()]
 
 			// if we found a better route to this node OR this
 			// node hasn't been seen yet
 			if (!seen) || (seen && previousChildCost > childCost) {
-				a.cost[child.Name()] = childCost
-				a.costWithHeuristic[child.Name()] = childCost + child.Heuristic()
-				heap.Push(a.frontier, child)
+				a.queue.NodeCosts[child.Name()] = childCost
+				a.queue.NodeCostWithHeuristic[child.Name()] = childCost + child.Heuristic()
+				if currIdx, inQueue := a.queue.NodeIndexes[child.Name()]; inQueue {
+					// if the child is already in the frontier, replace it
+					// with this node b/c this node has a lower cost
+					a.queue.Frontier[currIdx] = child
+					// now that the cost has changed,
+					// fix the placement of that node
+					heap.Fix(a.queue, currIdx)
+				} else {
+					heap.Push(a.queue, child)
+				}
 			}
 		}
+
 	}
 	return nil, fmt.Errorf("frontier is empty; searched entire space, but could not find goal state")
 }
