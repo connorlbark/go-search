@@ -1,5 +1,7 @@
 # go-search
 
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=for-the-badge)](https://pkg.go.dev/github.com/porgull/go-search)
+
 Implementation of search algorithms in golang.
 
 Inspired by [go-astar](https://github.com/beefsack/go-astar)
