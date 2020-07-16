@@ -87,7 +87,7 @@ Uninformed Search Algorithms:
 
 Informed Search Algorithms
 - [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search#Greedy_BFS) (key: `greedy_best_first`): Uses only heuristic
-- [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) (key: `a*`) Search: Uses both cost and heuristic
+- [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) (key: `a*`): Uses both cost and heuristic
 
 Local Search Algorithms:
 - TODO
@@ -137,11 +137,11 @@ Pre-made Grid environments:
 
 ### StateEnvironment
 
-A State environment is an environment
-where every single state can be loaded
+A state environment is an environment
+where every state can be loaded
 into memory.
 
-For example, the states can 
+In other words, the states can 
 be enumerated like so:
 
 ```json5
