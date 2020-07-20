@@ -24,6 +24,7 @@ var (
 		"uniform_cost":        UniformCost{},
 		"depth_limited":       DepthLimited{},
 		"iterative_deepening": IterativeDeepening{},
+		"rbfs":                RecursiveBestFirstSearch{},
 	}
 )
 

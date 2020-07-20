@@ -82,14 +82,34 @@ See the `environments.Environment` interface and the
 
 ## Provided Search Algorithms
 
-Uninformed Search Algorithms:
-- TODO
+Terminology:
+- Heuristic: Estimated 'distance' to the goal
+- Cost: The cost of traversing to that node. The goal is to minimize this cost.
 
-Informed Search Algorithms
-- [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search#Greedy_BFS) (key: `greedy_best_first`): Uses only heuristic
-- [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) (key: `a*`): Uses both cost and heuristic
+### Uninformed Search Algorithms
+These algorithms don't use a heuristic to find the goal. 
 
-Local Search Algorithms:
+Algorithms:
+- [Breadth First](https://en.wikipedia.org/wiki/Breadth-first_search) (key: `breadth_first`): Searches horizontally
+- [Depth First](https://en.wikipedia.org/wiki/Depth-first_search) (key: `depth_first`): Searches vertically
+- [Depth Limited](https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search) (key: `depth_limited`, params: `depth_limit`): Searches vertically up to a maximum depth 
+- [Iterative Deepening](https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search) (key: `iterative_deepening`): Runs `depth_limited` with an iteratively higher maximum depth until it finds the goal
+- [Uniform Cost](https://math.wikia.org/wiki/Uniform_cost_search) (key: `uniform_cost`): Searches based upon the lowest cost node until it finds the goal node
+
+### Informed Search Algorithms
+These algorithms use a heuristic to find the goal. How well
+these algorithms perform depends heavily upon how good of an
+estimate the heuristic provides.
+
+- [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search#Greedy_BFS) (key: `greedy_best_first`): Searches based upon the lowest heuristic
+- [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) (key: `a*`): Searches based upon the lowest heuristic and cost
+- [RBFS/Recursive Best First Search](https://www.eecs.yorku.ca/course_archive/2013-14/F/3401/slides/15b-RBFS.pdf) (key: `rbfs`): Recursively searches based upon the cost and heuristic, but with only linear memory requirements and higher time requirements than A*
+
+### Local Search Algorithms
+These algorithms should be used when the path to the goal
+doesn't matter, just that it's found. They don't guarantee
+finding the optimal solution, but can be more efficient.
+
 - TODO
 
 ## Provided Environments
