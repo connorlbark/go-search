@@ -39,16 +39,25 @@ type Result struct {
 	Node        environments.Node
 	Environment environments.Environment
 	Iterations  int
+
+	CustomResultStats map[string]string
 }
 
 // Print prints the results to stdout
 func (r Result) Print() {
-	fmt.Printf("Found node %s in %d interations.\n", r.Node.Name(), r.Iterations)
+	fmt.Printf("Found node %s in %d iterations.\n", r.Node.Name(), r.Iterations)
 	steps := r.Node.Steps()
 
 	fmt.Printf("Steps (%d): %s\n", len(steps), strings.Join(steps, ", "))
 	fmt.Println("Total cost of solution:", r.TotalCost())
 	r.Environment.VisualizeSolution(r.Node)
+
+	if len(r.CustomResultStats) > 0 {
+		fmt.Println("Custom result data for this run:")
+		for key, val := range r.CustomResultStats {
+			fmt.Printf("%s: %s\n", key, val)
+		}
+	}
 }
 
 // TotalCost returns the total cost of the
