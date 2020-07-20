@@ -31,7 +31,10 @@ func (a DepthLimited) Run(ctx search.Context, e environments.Environment) (searc
 
 	node, err := a.findGoal(e)
 	if err != nil {
-		return search.Result{}, err
+		return search.Result{
+			Iterations:  a.iterations,
+			Environment: e,
+		}, err
 	}
 
 	return search.Result{
@@ -82,28 +85,28 @@ func (a *DepthLimited) findGoal(e environments.Environment) (environments.Node, 
 		}
 
 		for _, child := range currentNode.Children() {
-			prevDepth, seen := a.depth[child.Name()]
+			childIdx, inQueue := a.queue.NodeIndexes[child.Name()]
+			prevDepth, seenPrev := a.depth[child.Name()]
 			currDepth := a.depth[currentNode.Name()] + 1
 
-			if currDepth >= a.limit {
+			if currDepth > a.limit {
 				continue
 			}
 
-			if !seen {
+			if seenPrev && prevDepth < currDepth {
+				continue
+			}
+
+			if !inQueue {
 				a.depth[child.Name()] = currDepth
 				// new node, just add it
 				heap.Push(a.queue, child)
 			} else {
-				if prevDepth < currDepth {
-					continue
-				}
 				a.depth[child.Name()] = currDepth
 				// we found a new route to the node. let's
 				// update the depth and fix its placement in the
 				// queue
-				childIdx := a.queue.NodeIndexes[child.Name()]
 				a.queue.Frontier[childIdx] = child
-				heap.Fix(a.queue, childIdx)
 			}
 		}
 

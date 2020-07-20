@@ -57,24 +57,27 @@ func (a *UniformCost) findGoal(e environments.Environment) (environments.Node, e
 		}
 
 		for _, child := range currentNode.Children() {
-			prevCost, seen := a.cost[child.Name()]
+			childIdx, inQueue := a.queue.NodeIndexes[child.Name()]
+			prevCost, seenPrev := a.cost[child.Name()]
 			currCost := a.cost[currentNode.Name()] + child.Cost()
-			if !seen {
+
+			// if the cost of the node we just expanded
+			// is higher than the pre-existing node in
+			// the queue, skip this iteration
+			if seenPrev && prevCost < currCost {
+				continue
+			}
+
+			if !inQueue {
 				a.cost[child.Name()] = a.cost[currentNode.Name()] + child.Cost()
 				// new node, just add it
 				heap.Push(a.queue, child)
 			} else {
-				// if the cost of the node we just expanded
-				// is higher than the pre-existing node in
-				// the queue, skip this iteration
-				if prevCost < currCost {
-					continue
-				}
+
 				a.cost[child.Name()] = a.cost[currentNode.Name()] + child.Cost()
 				// we found a new route to the node. let's
 				// update the cost and fix its placement in the
 				// queue
-				childIdx := a.queue.NodeIndexes[child.Name()]
 				a.queue.Frontier[childIdx] = child
 				heap.Fix(a.queue, childIdx)
 			}

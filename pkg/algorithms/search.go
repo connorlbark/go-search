@@ -17,12 +17,13 @@ var (
 	// Algorithms defines the valid
 	// search algorithms
 	algorithms = map[string]Algorithm{
-		"a*":                AStar{},
-		"greedy_best_first": GreedyBestFirst{},
-		"breadth_first":     BreadthFirst{},
-		"depth_first":       DepthFirst{},
-		"uniform_cost":      UniformCost{},
-		"depth_limited":     DepthLimited{},
+		"a*":                  AStar{},
+		"greedy_best_first":   GreedyBestFirst{},
+		"breadth_first":       BreadthFirst{},
+		"depth_first":         DepthFirst{},
+		"uniform_cost":        UniformCost{},
+		"depth_limited":       DepthLimited{},
+		"iterative_deepening": IterativeDeepening{},
 	}
 )
 
