@@ -6,9 +6,15 @@ import (
 	"github.com/porgull/go-search/pkg/environments"
 )
 
+// PriorityNodeQueueConfig defines optional
+// arguments when creating a priority node queue
+type PriorityNodeQueueConfig struct {
+	HigherIsBetter bool
+}
+
 // NewPriorityNodeQueue initializes a priority queue with the provided
 // start node and priority map to use
-func NewPriorityNodeQueue(start environments.Node, priorityMap map[string]int) *PriorityNodeQueue {
+func NewPriorityNodeQueue(start environments.Node, priorityMap map[string]int, config PriorityNodeQueueConfig) *PriorityNodeQueue {
 	frontier := make([]environments.Node, 1, 512)
 	frontier[0] = start
 
@@ -16,9 +22,10 @@ func NewPriorityNodeQueue(start environments.Node, priorityMap map[string]int) *
 	nodeIndexes[start.Name()] = 0
 
 	queue := &PriorityNodeQueue{
-		NodeIndexes: nodeIndexes,
-		Frontier:    frontier,
-		PriorityMap: priorityMap,
+		NodeIndexes:             nodeIndexes,
+		Frontier:                frontier,
+		PriorityMap:             priorityMap,
+		PriorityNodeQueueConfig: config,
 	}
 
 	heap.Init(queue)
@@ -31,6 +38,8 @@ func NewPriorityNodeQueue(start environments.Node, priorityMap map[string]int) *
 // for a priority queue based on a custom priority map;
 // see heap.Interface for usage
 type PriorityNodeQueue struct {
+	PriorityNodeQueueConfig
+
 	// Frontier is the current
 	// open set
 	Frontier []environments.Node
@@ -53,6 +62,9 @@ func (q *PriorityNodeQueue) Len() int {
 }
 
 func (q *PriorityNodeQueue) Less(i, j int) bool {
+	if q.HigherIsBetter {
+		return q.PriorityMap[q.Frontier[i].Name()] > q.PriorityMap[q.Frontier[j].Name()]
+	}
 	return q.PriorityMap[q.Frontier[i].Name()] < q.PriorityMap[q.Frontier[j].Name()]
 }
 

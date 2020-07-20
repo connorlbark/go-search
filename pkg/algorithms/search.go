@@ -10,7 +10,7 @@ import (
 // Algorithm defines the interface for a search algorithm
 type Algorithm interface {
 	// Run searches in the environment for the goal node
-	Run(e environments.Environment) (search.Result, error)
+	Run(ctx search.Context, e environments.Environment) (search.Result, error)
 }
 
 var (
@@ -19,6 +19,10 @@ var (
 	algorithms = map[string]Algorithm{
 		"a*":                AStar{},
 		"greedy_best_first": GreedyBestFirst{},
+		"breadth_first":     BreadthFirst{},
+		"depth_first":       DepthFirst{},
+		"uniform_cost":      UniformCost{},
+		"depth_limited":     DepthLimited{},
 	}
 )
 

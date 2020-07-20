@@ -19,7 +19,7 @@ type GreedyBestFirst struct {
 }
 
 // Run runs A* on the environment and returns the result
-func (a GreedyBestFirst) Run(e environments.Environment) (search.Result, error) {
+func (a GreedyBestFirst) Run(ctx search.Context, e environments.Environment) (search.Result, error) {
 	a.setStart(e.Start())
 
 	node, err := a.findGoal(e)
@@ -42,7 +42,7 @@ func (a *GreedyBestFirst) setStart(start environments.Node) {
 
 	a.iterations = 0
 
-	a.queue = NewPriorityNodeQueue(start, a.heuristic)
+	a.queue = NewPriorityNodeQueue(start, a.heuristic, PriorityNodeQueueConfig{})
 }
 
 // find and return the goal node

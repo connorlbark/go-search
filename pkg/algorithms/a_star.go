@@ -21,7 +21,7 @@ type AStar struct {
 }
 
 // Run runs A* on the environment and returns the result
-func (a AStar) Run(e environments.Environment) (search.Result, error) {
+func (a AStar) Run(ctx search.Context, e environments.Environment) (search.Result, error) {
 	a.setStart(e.Start())
 
 	node, err := a.findGoal(e)
@@ -46,7 +46,7 @@ func (a *AStar) setStart(start environments.Node) {
 
 	a.iterations = 0
 
-	a.queue = NewPriorityNodeQueue(start, a.costWithHeuristic)
+	a.queue = NewPriorityNodeQueue(start, a.costWithHeuristic, PriorityNodeQueueConfig{})
 }
 
 // find and return the goal node
