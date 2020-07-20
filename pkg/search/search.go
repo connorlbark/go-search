@@ -7,6 +7,32 @@ import (
 	"github.com/porgull/go-search/pkg/environments"
 )
 
+// Context passes search args to search algorithms
+type Context struct {
+	CustomSearchParams CustomSearchParams
+}
+
+// CustomSearchParams contains any custom values
+// a search algorithm would need, e.g. max depth
+// for depth limited search
+type CustomSearchParams map[string]string
+
+// ParseCustomSearchParams parses custom search params from
+// a user inputted string
+func ParseCustomSearchParams(val string) (CustomSearchParams, error) {
+	out := make(CustomSearchParams)
+	splitKeyVals := strings.Split(val, " ")
+	for _, keyval := range splitKeyVals {
+		splitKeyVal := strings.SplitN(keyval, "=", 1)
+		if len(splitKeyVal) != 2 {
+			return CustomSearchParams{}, fmt.Errorf("Custom search parameters have incorrect format: key/val '%s' should have an equals, but does not", keyval)
+		}
+		key, val := splitKeyVal[0], splitKeyVal[1]
+		out[key] = val
+	}
+	return out, nil
+}
+
 // Result contains statistics about a single run
 // of the search algorithm on an environment
 type Result struct {

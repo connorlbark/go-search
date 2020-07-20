@@ -4,15 +4,18 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/porgull/go-search/pkg/search"
+
 	"github.com/porgull/go-search/pkg/algorithms"
 	"github.com/porgull/go-search/pkg/environments"
 	"github.com/spf13/cobra"
 )
 
 type runFlagsCfg struct {
-	on   string
-	load string
-	with string
+	on                 string
+	load               string
+	with               string
+	customSearchParams map[string]string
 }
 
 var (
@@ -73,7 +76,11 @@ var (
 				}
 			}
 
-			result, err := algo.Run(env)
+			ctx := search.Context{
+				CustomSearchParams: search.CustomSearchParams(runFlags.customSearchParams),
+			}
+
+			result, err := algo.Run(ctx, env)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error while running algorithm %s on %s: %s\n", runFlags.with, env.Name(), err.Error())
 				os.Exit(1)
@@ -88,6 +95,7 @@ func init() {
 	runCmd.PersistentFlags().StringVar(&runFlags.on, "on", "", "Use this pre-created environment to run the search algorithm")
 	runCmd.PersistentFlags().StringVar(&runFlags.load, "load", "", "Load your own environment into memory")
 	runCmd.PersistentFlags().StringVar(&runFlags.with, "with", "", "Algorithm to use to search")
+	runCmd.PersistentFlags().StringToStringVar(&runFlags.customSearchParams, "params", map[string]string{}, "If the algorithm needs custom parameters, you can pass them here with the format \"key1=val1,key2=val2\"")
 }
 
 func init() {
