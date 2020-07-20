@@ -17,22 +17,6 @@ type Context struct {
 // for depth limited search
 type CustomSearchParams map[string]string
 
-// ParseCustomSearchParams parses custom search params from
-// a user inputted string
-func ParseCustomSearchParams(val string) (CustomSearchParams, error) {
-	out := make(CustomSearchParams)
-	splitKeyVals := strings.Split(val, " ")
-	for _, keyval := range splitKeyVals {
-		splitKeyVal := strings.SplitN(keyval, "=", 1)
-		if len(splitKeyVal) != 2 {
-			return CustomSearchParams{}, fmt.Errorf("Custom search parameters have incorrect format: key/val '%s' should have an equals, but does not", keyval)
-		}
-		key, val := splitKeyVal[0], splitKeyVal[1]
-		out[key] = val
-	}
-	return out, nil
-}
-
 // Result contains statistics about a single run
 // of the search algorithm on an environment
 type Result struct {
