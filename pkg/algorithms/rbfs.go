@@ -13,6 +13,7 @@ type RecursiveBestFirstSearch struct {
 	queue *PriorityNodeQueue
 
 	fLimits map[string]int
+	cost    map[string]int
 
 	iterations int
 }
@@ -35,23 +36,19 @@ func (a RecursiveBestFirstSearch) Run(ctx search.Context, e environments.Environ
 
 // initialize RecursiveBestFirstSearch's fields for this environment
 func (a *RecursiveBestFirstSearch) setStart(start environments.Node) {
-	a.fLimits = make(map[string]int, 512)
-	a.fLimits[start.Name()] = -1
-
 	a.iterations = 0
-
 }
 
 // find and return the goal node
 func (a *RecursiveBestFirstSearch) findGoal(e environments.Environment) (environments.Node, error) {
-	node, _ := a.recurse(e, e.Start(), -1)
+	node, _ := a.recurse(e, e.Start(), -1, 0)
 	if node == nil {
 		return nil, fmt.Errorf("explored entire search space, but could not find goal node")
 	}
 	return node, nil
 }
 
-func (a *RecursiveBestFirstSearch) recurse(e environments.Environment, node environments.Node, fLimit int) (environments.Node, int) {
+func (a *RecursiveBestFirstSearch) recurse(e environments.Environment, node environments.Node, fLimit int, totalCost int) (environments.Node, int) {
 	if e.IsGoalNode(node) {
 		return node, 0
 	}
@@ -59,29 +56,50 @@ func (a *RecursiveBestFirstSearch) recurse(e environments.Environment, node envi
 
 	children := node.Children()
 
+	for i, child := range children {
+		// TODO: fix
+		// remove the parent node, it breaks RBFS b/c it will recurse infinitely.
+		// not sure why.
+		if node.Parent() != nil && node.Parent().IsNode(child) {
+			// replace the parent with the last child
+			children[i] = children[len(children)-1]
+			children[len(children)-1] = nil
+			// lop off the last child
+			children = children[:len(children)-1]
+		}
+	}
+
+	fLimits := make(map[string]int, len(children))
+
 	if len(children) == 0 {
-		fmt.Println("no children")
 		return nil, -1
 	}
 
+	// NOTE: we have to ensure in all of these functions that we don't
+	// go back to the parent, otherwise it could keep looping forever. this
+	// can be seen in the `maze` environment. maybe there should be some way
+	// to ask the environment to not pass the parent as a possible route from
+	// the child.
 	for _, child := range children {
-		//_, hasPrevFLimit := a.fLimits[child.Name()]
-		currChildF := a.totalCost(child) + child.Heuristic()
+		// totalCost is a running total of the total cost of reaching the parent node
+		pathF := totalCost + child.Cost() + child.Heuristic()
 
-		a.fLimits[child.Name()] = rbfsmax(currChildF, a.fLimits[node.Name()])
-
+		fLimits[child.Name()] = pathF
 	}
 
+	num := 0
+
 	for {
+		num++
 		bestF, bestIdx := -1, -1
 
 		for idx, child := range children {
 			if bestIdx == -1 {
-				bestF = a.fLimits[child.Name()]
+				bestF = fLimits[child.Name()]
 				bestIdx = idx
 			}
-			if rbfslessthan(a.fLimits[child.Name()], bestF) {
-				bestF = a.fLimits[child.Name()]
+			if rbfslessthan(fLimits[child.Name()], bestF) {
+				bestF = fLimits[child.Name()]
 				bestIdx = idx
 			}
 		}
@@ -96,31 +114,21 @@ func (a *RecursiveBestFirstSearch) recurse(e environments.Environment, node envi
 				continue
 			}
 			if !setAlt {
-				altF = a.fLimits[child.Name()]
+				altF = fLimits[child.Name()]
 				setAlt = true
 			}
 
-			if rbfslessthan(a.fLimits[child.Name()], altF) {
-				altF = a.fLimits[child.Name()]
+			if rbfslessthan(fLimits[child.Name()], altF) {
+				altF = fLimits[child.Name()]
 			}
 		}
 
-		result, bestF := a.recurse(e, children[bestIdx], rbfsmin(fLimit, altF))
-		a.fLimits[children[bestIdx].Name()] = bestF // now that search has been conducted,
+		result, newBest := a.recurse(e, children[bestIdx], rbfsmin(fLimit, altF), totalCost+children[bestIdx].Cost())
+		fLimits[children[bestIdx].Name()] = newBest // now that search has been conducted,
 		if result != nil {
 			return result, 0
 		}
 	}
-}
-
-func (a *RecursiveBestFirstSearch) totalCost(child environments.Node) int {
-	cost := child.Cost()
-	parent := child.Parent()
-	for parent != nil {
-		cost += parent.Cost()
-		parent = parent.Parent()
-	}
-	return cost
 }
 
 func rbfsmax(a, b int) int {

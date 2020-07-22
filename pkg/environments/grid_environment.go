@@ -2,7 +2,6 @@ package environments
 
 import (
 	"fmt"
-	"strings"
 )
 
 func init() {
@@ -96,8 +95,9 @@ func (g *GridEnvironment) VisualizeSolution(n Node) {
 		}
 	}
 
-	fmt.Println(strings.Join(solutionGrid, "\n"))
-
+	for _, gridCol := range solutionGrid {
+		fmt.Println(gridCol)
+	}
 }
 
 func (g *GridEnvironment) copyGrid() []string {
