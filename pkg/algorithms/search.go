@@ -18,6 +18,7 @@ var (
 	// search algorithms
 	algorithms = map[string]Algorithm{
 		"a*":                  AStar{},
+		"sma*":                SMAStar{},
 		"greedy_best_first":   GreedyBestFirst{},
 		"breadth_first":       BreadthFirst{},
 		"depth_first":         DepthFirst{},

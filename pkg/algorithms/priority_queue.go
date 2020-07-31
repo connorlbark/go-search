@@ -10,15 +10,25 @@ import (
 // arguments when creating a priority node queue
 type PriorityNodeQueueConfig struct {
 	HigherIsBetter bool
+
+	InitialFrontierAllocation int
+
+	NegativeOneIsInfinity bool
 }
 
 // NewPriorityNodeQueue initializes a priority queue with the provided
 // start node and priority map to use
 func NewPriorityNodeQueue(start environments.Node, priorityMap map[string]int, config PriorityNodeQueueConfig) *PriorityNodeQueue {
-	frontier := make([]environments.Node, 1, 512)
+	size := config.InitialFrontierAllocation
+
+	if size == 0 {
+		size = 512
+	}
+
+	frontier := make([]environments.Node, 1, size)
 	frontier[0] = start
 
-	nodeIndexes := make(map[string]int, 512)
+	nodeIndexes := make(map[string]int, size)
 	nodeIndexes[start.Name()] = 0
 
 	queue := &PriorityNodeQueue{
@@ -57,15 +67,76 @@ type PriorityNodeQueue struct {
 	NodeIndexes map[string]int
 }
 
+func (q *PriorityNodeQueue) GetNodeInQueue(node environments.Node) environments.Node {
+	if idx, ok := q.NodeIndexes[node.Name()]; ok {
+		return q.Frontier[idx]
+	}
+	return nil
+}
+
+func (q *PriorityNodeQueue) GetNodeInQueueByName(node string) environments.Node {
+	if idx, ok := q.NodeIndexes[node]; ok {
+		return q.Frontier[idx]
+	}
+	return nil
+}
+
+func (q *PriorityNodeQueue) HasNodeInQueue(node environments.Node) bool {
+	return q.HasNodeInQueueByName(node.Name())
+}
+
+func (q *PriorityNodeQueue) HasNodeInQueueByName(node string) bool {
+	_, ok := q.NodeIndexes[node]
+	return ok
+}
+
+func (q *PriorityNodeQueue) HasAllInQueueByName(nodes []string) bool {
+	for _, node := range nodes {
+		if !q.HasNodeInQueueByName(node) {
+			return false
+		}
+	}
+	return true
+}
+
+func (q *PriorityNodeQueue) HasAllInQueue(nodes []environments.Node) bool {
+	for _, node := range nodes {
+		if !q.HasNodeInQueue(node) {
+			return false
+		}
+	}
+	return true
+}
+
 func (q *PriorityNodeQueue) Len() int {
 	return len(q.Frontier)
 }
 
 func (q *PriorityNodeQueue) Less(i, j int) bool {
+
+	iVal, jVal := q.PriorityMap[q.Frontier[i].Name()], q.PriorityMap[q.Frontier[j].Name()]
+
 	if q.HigherIsBetter {
-		return q.PriorityMap[q.Frontier[i].Name()] > q.PriorityMap[q.Frontier[j].Name()]
+		if q.NegativeOneIsInfinity {
+			if iVal == -1 {
+				return true
+			} else if jVal == -1 {
+				return false
+			}
+		}
+
+		return iVal > jVal
 	}
-	return q.PriorityMap[q.Frontier[i].Name()] < q.PriorityMap[q.Frontier[j].Name()]
+
+	if q.NegativeOneIsInfinity {
+		if iVal == -1 {
+			return false
+		} else if jVal == -1 {
+			return true
+		}
+	}
+
+	return iVal < jVal
 }
 
 func (q *PriorityNodeQueue) Swap(i, j int) {
